@@ -63,14 +63,16 @@ public class PlannerController {
 
     // 일정들 가져오기
     @GetMapping("/plans")
-    public ResponseEntity<Map<String, Object>> getPlans() {
+    public ResponseEntity<Map<String, Object>> getPlans(
+            @RequestParam Map<String, Object> reqData,
+            Principal principal) {
         log.info("getPlans()");
 
+        reqData.put("owner_id", principal.getName());
+        Map<String, Object> resultMap = plannerService.getPlans(reqData);
 
-
-        return null;
+        return ResponseEntity.ok(resultMap);
 
     }
-
 
 }

@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,6 +43,27 @@ public class PlannerService {
         }
 
         resultMap.put("result", result);
+
+        return resultMap;
+
+    }
+
+    public Map<String, Object> getPlans(Map<String, Object> reqData) {
+        log.info("getPlans()");
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        List<PlannerEntity> plannerEntities = plannerRepository.findByPlanYearAndPlanMonthAndPlanOwnerId(
+                Integer.valueOf(String.valueOf(reqData.get("year"))),
+                Integer.valueOf(String.valueOf(reqData.get("month"))),
+                String.valueOf(reqData.get("owner_id"))
+        );
+
+        List<PlannerDto> plannerDtos = plannerEntities.stream()
+                .map(PlannerEntity::toDto)
+                .collect(Collectors.toList());
+
+        resultMap.put("plans", plannerDtos);
 
         return resultMap;
 
