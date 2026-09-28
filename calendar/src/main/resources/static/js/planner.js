@@ -418,12 +418,61 @@ async function fetchWritePlan(year, month, date, title, body, file) {
         let data = await response.json();
         console.log('data: ', data);
 
+        if (!data || data.result <= 0) {
+            alert("일정 등록에 문제가 발생 했습니다.");
+
+        } else {
+            alert("일정이 정상적으로 등록 되었습니다.");
+            removeCalenderTr();     // 기존 달력(<tr>) 제거
+            addCalenderTr();        // 새 달력(<tr>) 생성
+            fetchGetCurrentMonthPlans(); // 일정들 가져오는 함수
+
+        }
+
+
     } catch (error) {
         console.log('fetchWritePlan() COMMUNICATION ERROR!! ', error);
         alert('일정 등록에 문제가 발생 했습니다.');
 
+    } finally {
+        hideWritePlanView();
+
     }
 
+}
 
+async function fetchGetCurrentMonthPlans() {
+    console.log('fetchGetCurrentMonthPlans() CALLED!!');
+
+    let reqData = {
+        "year": current_year,
+        "month": current_month
+    }
+
+    let queryString = new URLSearchParams(reqData).toString();
+
+    try {
+        let response = await fetch(`/planner/plans?${queryString}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        console.log('fetchGetCurrentMonthPlans() COMMUNICATION SUCCESS!! ');
+
+        let data = await response.json();
+        console.log('data: ', data);
+
+
+
+    } catch (error) {
+        console.log('fetchGetCurrentMonthPlans() COMMUNICATION ERROR!! ', error);
+
+    }
 
 }
